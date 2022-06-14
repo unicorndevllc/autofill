@@ -1,5 +1,3 @@
-console.log("autofill.js loaded");
-
 var inputField = document.getElementById("musthavein");
 var searchList = document.getElementById("search-terms1");
 var searchTermsWrapper = document.getElementById("searchTermsWrapper1");
@@ -746,9 +744,7 @@ var terms = [
 inputField.setAttribute("onkeyup", "typeSearch()");
 searchTermsWrapper.style.display = "none";
 
-function searchTerms() {
-  console.log("searchTerms function called");
-
+async function searchTerms() {
   // add terms to dropdown list.
 
   for (i = 0; i < terms.length; i++) {
@@ -758,8 +754,6 @@ function searchTerms() {
 
     searchList.appendChild(li);
   }
-
-  console.log("searchTerms for loop finished executing");
 
   // orders the list in alphabetical order.
 
@@ -774,13 +768,13 @@ function searchTerms() {
 
     b = list.getElementsByTagName("LI");
 
-    for (i = 0; i < b.length - 1; i++) {
+    while (i < b.length) {
       shouldSwitch = false;
-
       if (b[i].innerHTML.toLowerCase() > b[i + 1].innerHTML.toLowerCase()) {
         shouldSwitch = true;
         break;
       }
+      i++;
     }
 
     if (shouldSwitch) {
