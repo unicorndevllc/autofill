@@ -757,7 +757,7 @@ async function searchTerms() {
 
   // orders the list in alphabetical order.
 
-  var list, i, switching, b, shouldSwitch;
+  var list, i, switching, b, shouldSwitch, j;
 
   list = document.getElementById("search-terms1");
 
@@ -768,13 +768,14 @@ async function searchTerms() {
 
     b = list.getElementsByTagName("LI");
 
-    while (i < b.length) {
+    j = 0;
+    while (j < b.length) {
       shouldSwitch = false;
-      if (b[i].innerHTML.toLowerCase() > b[i + 1].innerHTML.toLowerCase()) {
+      if (b[j].innerHTML.toLowerCase() > b[j + 1].innerHTML.toLowerCase()) {
         shouldSwitch = true;
         break;
       }
-      i++;
+      j++;
     }
 
     if (shouldSwitch) {
