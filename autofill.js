@@ -757,7 +757,10 @@ async function searchTerms() {
     var li2 = document.createElement("li");
 
     li.innerHTML = '<a href="#" class="list-term">' + terms[i] + "</a>";
-    li2.innerHTML = '<a href="#" class="list-term">' + terms[i] + "</a>";
+    li2.innerHTML =
+      '<a data-type="nicetohavein" href="#" class="list-term">' +
+      terms[i] +
+      "</a>";
 
     searchList.appendChild(li);
     searchList2.appendChild(li2);
@@ -863,9 +866,16 @@ document.addEventListener("click", function (event) {
 
   event.preventDefault();
 
-  inputField.value = event.target.innerHTML;
+  console.log(event.target);
+  if (event.target.getAttribute("data-type") === "nicetohavein") {
+    inputField2.value = event.target.innerHTML;
 
-  searchTermsWrapper.style.display = "none";
+    searchTermsWrapper2.style.display = "none";
+  } else {
+    inputField.value = event.target.innerHTML;
+
+    searchTermsWrapper.style.display = "none";
+  }
 });
 
 function checkFocus(e) {
