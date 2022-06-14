@@ -1,6 +1,9 @@
 var inputField = document.getElementById("musthavein");
+var inputField2 = document.getElementById("nicetohavein");
 var searchList = document.getElementById("search-terms1");
+var searchList2 = document.getElementById("search-terms2");
 var searchTermsWrapper = document.getElementById("searchTermsWrapper1");
+var searchTermsWrapper2 = document.getElementById("searchTermsWrapper2");
 var terms = [
   ".NET",
   "AJAX",
@@ -742,17 +745,22 @@ var terms = [
 ];
 
 inputField.setAttribute("onkeyup", "typeSearch()");
+inputField2.setAttribute("onkeyup", "typeSearch2()");
 searchTermsWrapper.style.display = "none";
+searchTermsWrapper2.style.display = "none";
 
 async function searchTerms() {
   // add terms to dropdown list.
 
   for (i = 0; i < terms.length; i++) {
     var li = document.createElement("li");
+    var li2 = document.createElement("li");
 
     li.innerHTML = '<a href="#" class="list-term">' + terms[i] + "</a>";
+    li2.innerHTML = '<a href="#" class="list-term">' + terms[i] + "</a>";
 
     searchList.appendChild(li);
+    searchList2.appendChild(li2);
   }
 
   // orders the list in alphabetical order.
@@ -801,6 +809,35 @@ function typeSearch() {
   filter = inputField.value.toUpperCase();
 
   ul = searchList;
+
+  li = ul.getElementsByTagName("li");
+
+  for (i = 0; i < li.length; i++) {
+    a = li[i];
+
+    txtValue = a.textContent || a.innerText;
+
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      li[i].style.display = "";
+    } else {
+      li[i].style.display = "none";
+    }
+  }
+}
+
+function typeSearch2() {
+  searchTermsWrapper2.style.display = "block";
+
+  if (inputField2.value == "") {
+    searchTermsWrapper2.style.display = "none";
+    console.log("test");
+  }
+
+  var filter, ul, li, a, i, txtValue;
+
+  filter = inputField2.value.toUpperCase();
+
+  ul = searchList2;
 
   li = ul.getElementsByTagName("li");
 
