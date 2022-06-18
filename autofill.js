@@ -866,6 +866,7 @@ function toggleWrapper() {
   if (searchTermsWrapper.style.display === "none") {
     searchTermsWrapper.style.display = "block";
     inputField.style.display = "block";
+    inputField.focus();
   } else {
     searchTermsWrapper.style.display = "none";
     inputField.style.display = "none";
@@ -896,6 +897,7 @@ function toggleWrapper2() {
   if (searchTermsWrapper2.style.display === "none") {
     searchTermsWrapper2.style.display = "block";
     inputField2.style.display = "block";
+    inputField2.focus();
   } else {
     searchTermsWrapper2.style.display = "none";
     inputField2.style.display = "none";
