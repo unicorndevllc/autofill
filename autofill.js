@@ -4,6 +4,14 @@ var searchList = document.getElementById("search-terms1");
 var searchList2 = document.getElementById("search-terms2");
 var searchTermsWrapper = document.getElementById("searchTermsWrapper1");
 var searchTermsWrapper2 = document.getElementById("searchTermsWrapper2");
+var selectedTechnologies = document.getElementById("selected-technologies1");
+var selectedTechnologies2 = document.getElementById("selected-technologies2");
+var mustHaveAllSkillsInput = document.getElementById(
+  "mustHaveInAllSkillsInput"
+);
+var niceToHaveAllSkillsInput = document.getElementById(
+  "niceToHaveAllSkillsInput"
+);
 var terms = [
   ".NET",
   "AJAX",
@@ -744,10 +752,68 @@ var terms = [
   "x86/x64 Assembler",
 ];
 
-inputField.setAttribute("onkeyup", "typeSearch()");
+selectedTechnologies.addEventListener("click", toggleWrapper);
+selectedTechnologies2.addEventListener("click", toggleWrapper2);
+inputField.addEventListener("keyup", typeSearch);
 inputField2.setAttribute("onkeyup", "typeSearch2()");
+
+inputField.style.display = "none";
+inputField2.style.display = "none";
 searchTermsWrapper.style.display = "none";
 searchTermsWrapper2.style.display = "none";
+
+function htmlDecode(input) {
+  var doc = new DOMParser().parseFromString(input, "text/html");
+  return doc.documentElement.textContent;
+}
+
+const addSkillToList = (skill, list, wrapper) => {
+  let input =
+    wrapper.id === "searchTermsWrapper1"
+      ? mustHaveAllSkillsInput.id
+      : niceToHaveAllSkillsInput.id;
+
+  const div = document.createElement("div");
+  div.innerHTML = `<span data-technology="${skill}">${skill}</span><a onclick="removeSkillFromList('${skill}', '${list.id}', '${wrapper.id}', '${input}')">x</a>`;
+  list.appendChild(div);
+
+  wrapper
+    .querySelector("ul")
+    .querySelector(`[data-technology="${htmlDecode(skill)}"]`)
+    .parentNode.remove();
+};
+
+const removeSkillFromList = (skill, list, wrapper, input) => {
+  let inputInstance = document.getElementById(input);
+
+  const selectedTechnologies = document
+    .getElementById(list)
+    .querySelectorAll("div");
+
+  selectedTechnologies.forEach((selectedTechnology) => {
+    selectedTechnology
+      .querySelector(`[data-technology="${skill}"]`)
+      ?.parentNode.remove();
+  });
+
+  const li = document.createElement("li");
+  li.innerHTML = `<a data-technology="${skill}" href="#" class="list-term">${skill}</a>`;
+
+  document.getElementById(wrapper).querySelector("ul").appendChild(li);
+
+  const newInputValue = inputInstance.value
+    .split("|")
+    .filter((e) => e !== skill)
+    .join("|");
+
+  inputInstance.value = newInputValue;
+
+  if (wrapper === "searchTermsWrapper1") {
+    toggleWrapper();
+  } else {
+    toggleWrapper2();
+  }
+};
 
 async function searchTerms() {
   // add terms to dropdown list.
@@ -756,11 +822,8 @@ async function searchTerms() {
     var li = document.createElement("li");
     var li2 = document.createElement("li");
 
-    li.innerHTML = '<a href="#" class="list-term">' + terms[i] + "</a>";
-    li2.innerHTML =
-      '<a data-type="nicetohavein" href="#" class="list-term">' +
-      terms[i] +
-      "</a>";
+    li.innerHTML = `<a data-technology="${terms[i]}" href="#" class="list-term">${terms[i]}</a>`;
+    li2.innerHTML = `<a data-technology="${terms[i]}" data-type="nicetohavein" href="#" class="list-term">${terms[i]}</a>`;
 
     searchList.appendChild(li);
     searchList2.appendChild(li2);
@@ -799,12 +862,13 @@ async function searchTerms() {
 
 // auto complete feature, activated on keystroke in the input.
 
-function typeSearch() {
-  searchTermsWrapper.style.display = "block";
-
-  if (inputField.value == "") {
+function toggleWrapper() {
+  if (searchTermsWrapper.style.display === "none") {
+    searchTermsWrapper.style.display = "block";
+    inputField.style.display = "block";
+  } else {
     searchTermsWrapper.style.display = "none";
-    console.log("test");
+    inputField.style.display = "none";
   }
 
   var filter, ul, li, a, i, txtValue;
@@ -828,13 +892,60 @@ function typeSearch() {
   }
 }
 
+function toggleWrapper2() {
+  if (searchTermsWrapper2.style.display === "none") {
+    searchTermsWrapper2.style.display = "block";
+    inputField2.style.display = "block";
+  } else {
+    searchTermsWrapper2.style.display = "none";
+    inputField2.style.display = "none";
+  }
+
+  var filter, ul, li, a, i, txtValue;
+
+  filter = inputField.value.toUpperCase();
+
+  ul = searchList;
+
+  li = ul.getElementsByTagName("li");
+
+  for (i = 0; i < li.length; i++) {
+    a = li[i];
+
+    txtValue = a.textContent || a.innerText;
+
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      li[i].style.display = "";
+    } else {
+      li[i].style.display = "none";
+    }
+  }
+}
+
+function typeSearch() {
+  var filter, ul, li, a, i, txtValue;
+
+  filter = inputField.value.toUpperCase();
+
+  ul = searchList;
+
+  li = ul.getElementsByTagName("li");
+
+  for (i = 0; i < li.length; i++) {
+    a = li[i];
+
+    txtValue = a.textContent || a.innerText;
+
+    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+      li[i].style.display = "";
+    } else {
+      li[i].style.display = "none";
+    }
+  }
+}
+
 function typeSearch2() {
   searchTermsWrapper2.style.display = "block";
-
-  if (inputField2.value == "") {
-    searchTermsWrapper2.style.display = "none";
-    console.log("test");
-  }
 
   var filter, ul, li, a, i, txtValue;
 
@@ -866,26 +977,39 @@ document.addEventListener("click", function (event) {
 
   event.preventDefault();
 
-  console.log(event.target);
   if (event.target.getAttribute("data-type") === "nicetohavein") {
-    inputField2.value = event.target.innerHTML;
+    if (niceToHaveAllSkillsInput.value.length > 0) {
+      niceToHaveAllSkillsInput.value =
+        niceToHaveAllSkillsInput.value +
+        "|" +
+        htmlDecode(event.target.innerHTML);
+    } else {
+      niceToHaveAllSkillsInput.value = htmlDecode(event.target.innerHTML);
+    }
+
+    addSkillToList(
+      event.target.innerHTML,
+      selectedTechnologies2,
+      searchTermsWrapper2
+    );
 
     searchTermsWrapper2.style.display = "none";
+    inputField2.style.display = "none";
   } else {
-    inputField.value = event.target.innerHTML;
+    if (mustHaveAllSkillsInput.value.length > 0) {
+      mustHaveAllSkillsInput.value =
+        mustHaveAllSkillsInput.value + "|" + htmlDecode(event.target.innerHTML);
+    } else {
+      mustHaveAllSkillsInput.value = htmlDecode(event.target.innerHTML);
+    }
+
+    addSkillToList(
+      event.target.innerHTML,
+      selectedTechnologies,
+      searchTermsWrapper
+    );
 
     searchTermsWrapper.style.display = "none";
+    inputField.style.display = "none";
   }
 });
-
-function checkFocus(e) {
-  var activeTextarea = document.activeElement.id;
-
-  if (activeTextarea != "autoInput") {
-    searchTermsWrapper.style.display = "none";
-  } else {
-    searchTermsWrapper.style.display = "block";
-  }
-}
-
-document.addEventListener("mouseup", checkFocus, false);
